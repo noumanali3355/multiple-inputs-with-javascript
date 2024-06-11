@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <h2>Dynamic Social Media Form</h2>
+
+    <button onclick="addInput()">Add</button>
+
+    <div id="dynamicForm"></div>
+
+    <script>
+      let userInputs = {};
+      let idCounter = 1;
+
+      function addInput() {
+        let platforms = [
+          "Social Media",
+          "Facebook",
+          "Instagram",
+          "TikTok",
+          "Twitter",
+          "YouTube",
+          "LinkedIn",
+          "Pinterest",
+        ];
+
+        // Check if the last selected option is 'Social Media'
+        let lastSelectedOption = document.querySelector(
+          "#dynamicForm div:last-child select"
+        );
+        if (lastSelectedOption && lastSelectedOption.value === "Social Media") {
+          alert("Please a social media platform.");
+          return;
+        }
+
+        // Check if the last input field is empty
+        let lastInputField = document.querySelector(
+          "#dynamicForm div:last-child input"
+        );
+        if (lastInputField && lastInputField.value.trim() === "") {
+          alert("Please enter a username.");
+          return;
+        }
+
+        let wrapper = document.createElement("div");
+        wrapper.id = idCounter;
+
+        let selectList = document.createElement("select");
+        selectList.className = "social-select";
+        selectList.onchange = function () {
+          if (this.value !== "Social Media") {
+            let key = this.value + "_" + wrapper.id;
+            let inputElement = this.nextSibling;
+            userInputs[key] = inputElement.value;
+            console.log(userInputs);
+          }
+        };
+        platforms.forEach(function (platform) {
+          let option = document.createElement("option");
+          option.value = platform;
+          option.text = platform;
+          selectList.appendChild(option);
+        });
+
+        let inputElement = document.createElement("input");
+        inputElement.type = "text";
+        inputElement.className = "social-input";
+        inputElement.placeholder = "Username or Handle";
+        inputElement.onchange = function () {
+          let selectElement = this.previousSibling;
+          if (selectElement.value !== "Social Media") {
+            let key = selectElement.value + "_" + wrapper.id;
+            userInputs[key] = this.value;
+            console.log(userInputs);
+          }
+        };
+
+        let removeButton = document.createElement("button");
+        removeButton.innerHTML = "-";
+        removeButton.onclick = function () {
+          let value = this.previousSibling.previousSibling.value;
+          let key = value + "_" + wrapper.id;
+          if (value !== "Social Media") {
+            delete userInputs[key];
+            console.log(userInputs);
+          }
+          this.parentNode.remove();
+        };
+
+        wrapper.appendChild(selectList);
+        wrapper.appendChild(inputElement);
+        wrapper.appendChild(removeButton);
+
+        document.getElementById("dynamicForm").appendChild(wrapper);
+
+        idCounter++;
+      }
+    </script>
+  </body>
+</html>
